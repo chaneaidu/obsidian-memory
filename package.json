@@ -1,0 +1,32 @@
+{
+  "name": "obsidian-memory",
+  "version": "1.0.0",
+  "description": "Persistent memory system for Obsidian - captures observations, generates narratives, enables semantic search",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "node scripts/bundle.js && node scripts/deploy.js",
+    "build": "npm run dev",
+    "deploy": "node scripts/deploy.js"
+  },
+  "keywords": [
+    "obsidian",
+    "memory",
+    "plugin",
+    "ai",
+    "semantic-search"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/obsidian-memory"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "esbuild": "^0.28.0",
+    "typescript": "^5.3.3"
+  }
+}

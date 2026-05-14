@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-memory",
+	"name": "Memory",
+	"version": "1.0.0",
+	"minAppVersion": "1.5.0",
+	"description": "Persistent memory system that captures observations, generates narratives, and enables semantic search",
+	"author": "",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}
