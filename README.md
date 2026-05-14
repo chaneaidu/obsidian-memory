@@ -1,6 +1,6 @@
 # Obsidian Memory
 
-**Persistent memory for AI** - Capture your Obsidian work, generate AI-readable memories, and inject context into AI conversations.
+**Your AI's Long-Term Memory** — Transform Obsidian notes into persistent, injectable context for AI conversations.
 
 [中文介绍](README_zh.md)
 
@@ -8,183 +8,160 @@
 
 ## The Problem
 
-When you chat with AI (Claude, ChatGPT, etc.), each conversation starts from scratch. The AI knows nothing about:
+Every AI conversation starts from scratch. AI has **zero memory** of:
+- Your codebase architecture decisions
+- Recent project discoveries
+- Past problem-solving approaches
 
-- Your current project architecture
-- Recent decisions you've made
-- Important discoveries from your work
-
-Even though you have everything documented in Obsidian, there's no easy way to give AI that context.
+Even though everything is documented in Obsidian, AI can't access it — creating a massive context gap that wastes your time repeating background.
 
 ## The Solution
 
-**Obsidian Memory** bridges this gap - it transforms your Obsidian work into persistent memory that AI can understand and use.
+**Obsidian Memory** bridges this gap with a complete system:
 
 ```
-You work in Obsidian → Plugin captures observations → You inject context to AI → AI understands your context
+You work in Obsidian → Captures context → AI understands your world
 ```
+
+**Three injection methods:**
+1. **📋 Manual Copy** — One-click copy formatted memories
+2. **🌐 Browser Extension** — Auto-inject into Claude/ChatGPT with one click
+3. **🔌 API Access** — Programmatic access for AI tools and scripts
 
 ---
 
-## Key Features
+## Why Obsidian Memory?
 
-| Feature | Description |
-|---------|-------------|
-| **Auto Capture** | Detects file changes in your vault every 30 seconds (configurable) |
-| **AI Narrative Generation** | Uses MiniMax API to generate natural language descriptions |
-| **Local Storage** | Saves to `memories.json` - persists across sessions |
-| **Search & Filter** | Keyword search with time-based filtering |
-| **Manual Notes** | Add thoughts manually, not just auto-capture |
-| **Context Injection** | One-click copy formatted memories to clipboard |
-
----
-
-## Use Cases
-
-### 1. AI-Assisted Development
-
-```
-1. You edit code notes in Obsidian
-2. Plugin generates observations ("Implemented user auth module")
-3. Next time you ask AI, inject the relevant memories
-4. AI understands your project context and gives better answers
-```
-
-### 2. Learning & Research
-
-```
-1. Read documentation and take notes in Obsidian
-2. AI captures key findings and insights
-3. Search quickly to find related knowledge
-4. Generate summaries for review
-```
-
-### 3. Decision Tracking
-
-```
-1. Document architectural decisions in Obsidian
-2. AI captures and generates decision narratives
-3. Later, search to recall why certain decisions were made
-```
-
-### 4. Daily Work Log
-
-```
-1. File edits automatically generate observations
-2. Manually add important thoughts
-3. Weekend review: summarize the week's memories
-```
+| Feature | What It Means |
+|---------|---------------|
+| **Zero Configuration** | Works immediately with sensible defaults |
+| **Privacy First** | All data stays local in your vault |
+| **AI-Native Output** | Memories formatted for AI consumption, not human reading |
+| **Three Injection Methods** | Manual, browser extension, or API — choose your workflow |
+| **Auto-Capture** | Watches vault changes, no manual entry required |
+| **Smart Search** | Find relevant memories by keyword or time |
 
 ---
 
 ## How It Works
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Obsidian Vault                           │
-│  ┌─────────┐   ┌─────────┐   ┌─────────┐                     │
-│  │ File A  │   │ File B  │   │ File C  │   ...             │
-│  └────┬────┘   └────┬────┘   └────┬────┘                   │
-│       └─────────────┼─────────────┘                           │
-│                     ▼                                         │
-│              ┌──────────────┐                                │
-│              │ LifecycleManager │  (30s polling)             │
-│              └──────────────┘                                │
-│                     │                                         │
-│                     ▼                                         │
-│         ┌─────────────────────┐                            │
-│         │ ObservationGenerator │  (AI narrative)            │
-│         └─────────────────────┘                            │
-│                     │                                         │
-│                     ▼                                         │
-│           memories.json                                     │
+┌──────────────────────────────────────────────────────────────┐
+│                         YOUR VAULT                           │
+│   ┌─────────┐   ┌─────────┐   ┌─────────┐                   │
+│   │ Notes   │   │ Code    │   │ Docs    │   ...            │
+│   └────┬────┘   └────┬────┘   └────┬────┘                  │
+│        └─────────────┼─────────────┘                        │
+│                      ↓                                       │
+│            ┌─────────────────┐                             │
+│            │  Auto-Capture   │  (30s polling)                │
+│            └────────┬────────┘                             │
+│                     ↓                                       │
+│        ┌────────────────────────┐                          │
+│        │   AI Narrative Gen     │  (MiniMax/any API)        │
+│        └────────┬────────────────┘                          │
+│                 ↓                                           │
+│         memories.json                                       │
 └─────────────────────────────────────────────────────────────┘
-
-                         │ (user action)
-
-┌─────────────────────────────────────────────────────────────┐
-│                      Memory Panel                            │
-│  Click 📋 → Memories copied to clipboard → Paste to AI       │
-└─────────────────────────────────────────────────────────────┘
+              ↓           ↓           ↓
+         ┌────┐      ┌────┐      ┌────┐
+         │ 📋 │      │ 🌐 │      │ 🔌 │
+         └────┘      └────┘      └────┘
+      Clipboard   Extension    API Server
 ```
 
 ---
 
-## Installation
+## Quick Start
 
-### Prerequisites
+### 1. Install Plugin
 
-- Obsidian v1.5.0 or higher
-- MiniMax API Key (for AI narrative generation)
+Copy to Obsidian plugins folder:
+```bash
+# Your vault path
+{vault}/.obsidian/plugins/obsidian-memory/
+# Copy: main.js, manifest.json, styles.css
+```
 
-### Steps
+Enable in Obsidian Settings → Plugins → **Memory**
 
-1. Download `main.js`, `manifest.json`, `styles.css` from releases
-2. Put them in `{vault}/.obsidian/plugins/obsidian-memory/`
-3. Enable plugin in Obsidian Settings → Plugins
-4. Configure your MiniMax API Key in plugin settings
+### 2. Configure API Key
 
-### Get MiniMax API Key
+Settings → Memory → Enter your API key (MiniMax or compatible API)
 
-1. Visit [MiniMax API](https://api.minimax.chat/)
-2. Register and get an API Key
-3. Paste in plugin settings
+### 3. Start Using
+
+- **Open Panel**: Click 🧠 in sidebar or `Ctrl/Cmd+P` → "Memory"
+- **Auto-Capture**: Works automatically — just use Obsidian
+- **Manual Add**: Click **+** to add thoughts manually
+- **Search**: Type keywords with time filters (Today/Week/Month)
+- **Inject**: Click **📋** to copy, paste into any AI
 
 ---
 
-## Usage
+## Advanced: Browser Extension + API Server
 
-### Open Memory Panel
+### API Server (Optional)
 
-- Click the lightbulb icon in left sidebar
-- Or use Command Palette (Ctrl/Cmd+P) → search "Memory"
+For programmatic access or browser extension:
 
-### Add Memory Manually
+```bash
+node server/index.js "/path/to/vault"
+# Runs on http://localhost:9180
+```
 
-1. Click **"+"** button at top
-2. Fill in title, content, type, concepts
-3. Click "Save"
+**Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| GET | `/memories` | All memories |
+| GET | `/memories/recent?limit=10` | Recent memories |
+| GET | `/memories/search?q=xxx` | Search memories |
 
-### Search Memories
+### Browser Extension (Optional)
 
-1. Type keywords in search box
-2. Press Enter
-3. Use time filter (All/Today/This Week/This Month)
+1. Open `chrome://extensions/`
+2. Enable Developer Mode
+3. Load unpacked → select `extension/` folder
+4. Visit Claude.ai or ChatGPT — 🧠 button appears
 
-### Inject Context to AI
+---
 
-1. Start an AI conversation
-2. Click **"📋"** button in panel
-3. Memories copied to clipboard
-4. Paste into AI conversation
+## Features
 
-### Delete Memory
+### Core
+- **Auto-Capture**: Detects file changes every 30s (configurable)
+- **AI Narrative Generation**: Converts file changes into readable summaries
+- **Local Storage**: All data in `memories.json` — no cloud, no tracking
+- **Privacy**: Only observations sent to AI, never raw file content
 
-- Hover over any memory → red "Delete" button appears
+### Search & Filter
+- Full-text keyword search
+- Time-based filtering (All/Today/Week/Month)
+- Relevance-scored results
+
+### Manual Memory
+- Add thoughts not from files
+- Tag with concepts
+- Categorize by type (change/bugfix/feature/decision)
 
 ### Export
-
-- Click "Export Memories" at bottom → all memories JSON copied to clipboard
-
----
-
-## Privacy
-
-- **Local Storage** - All data saved to local `memories.json`
-- **AI Communication** - Only observations (not file content) sent to MiniMax API
-- **You Control** - Disable auto-capture anytime, manual only
-- **No Tracking** - Plugin collects no usage data
+- Copy all memories as JSON
+- Copy formatted memories for AI prompts
+- Per-memory delete
 
 ---
 
 ## Configuration
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| API Key | MiniMax API Key for AI generation | (required) |
-| Poll Interval | Seconds between vault scans | 30 |
-| Auto Capture | Automatically capture file changes | true |
-| Default Time Filter | Default view filter | All |
+| Setting | Default | Description |
+|---------|---------|-------------|
+| API Key | (required) | Your AI API key |
+| API URL | MiniMax endpoint | Custom AI endpoint |
+| Model | MiniMax-Text-01 | AI model name |
+| Poll Interval | 30s | How often to scan vault |
+| Auto Capture | true | Automatically capture changes |
+| Default Filter | All | Default time filter |
 
 ---
 
@@ -195,60 +172,66 @@ You work in Obsidian → Plugin captures observations → You inject context to 
 | Framework | Obsidian Plugin API |
 | Language | TypeScript |
 | Bundler | esbuild |
-| Storage | JSON file (local) |
-| AI | MiniMax Chat API |
+| Storage | JSON (local vault) |
+| AI | MiniMax Chat API (configurable) |
 
 ---
 
 ## Project Structure
 
 ```
-obsidian-memory-plugin/
-├── manifest.json           # Plugin metadata
-├── package.json            # Project config
-├── styles.css              # Styles
+obsidian-memory/
+├── manifest.json              # Plugin metadata
+├── package.json               # Project config
+├── styles.css                 # Plugin styles
 ├── src/
-│   ├── main.ts            # Entry point
-│   ├── ui/
-│   │   └── MemoryPanel.ts # Sidebar UI
-│   ├── storage/
-│   │   └── SqliteStore.ts  # Data persistence
-│   ├── lifecycle/
-│   │   └── LifecycleManager.ts  # Vault polling
-│   ├── search/
-│   │   └── SearchManager.ts     # Search
-│   ├── observation/
-│   │   └── ObservationGenerator.ts  # AI generation
-│   ├── settings/
-│   │   ├── SettingsManager.ts
-│   │   └── SettingsTab.ts
-│   └── utils/
-│       └── tag-stripping.ts
-└── scripts/
-    ├── bundle.js
-    └── deploy.js
+│   ├── main.ts               # Entry point
+│   ├── ui/MemoryPanel.ts     # Sidebar UI
+│   ├── storage/SqliteStore.ts # Data persistence
+│   ├── lifecycle/            # Vault polling
+│   ├── search/               # Search logic
+│   ├── observation/           # AI generation
+│   └── settings/             # Settings UI
+├── server/
+│   └── index.js              # HTTP API server (optional)
+└── extension/                 # Browser extension (optional)
+    ├── manifest.json
+    ├── background.js
+    ├── content.js
+    └── popup.html
 ```
+
+---
+
+## Privacy
+
+- **Local Only**: All data stored in your vault's `.obsidian-memory/` folder
+- **No Cloud**: Nothing sent to external servers except AI API (when you choose)
+- **You Control**: Disable auto-capture anytime — manual mode only
+- **No Telemetry**: Zero tracking, zero analytics
 
 ---
 
 ## FAQ
 
-### Q: How to get API Key?
-Visit [MiniMax API](https://api.minimax.chat/) to register and get one.
+**Q: Which AI APIs work?**
+A: Any OpenAI-compatible API. Default is MiniMax. Configure URL and model in settings.
 
-### Q: Why did AI generation fail?
-1. Check if API Key is configured correctly
-2. Check network connection
-3. API has rate limits - wait and retry
+**Q: How is data stored?**
+A: `{vault}/.obsidian-memory/memories.json`
 
-### Q: Where is data stored?
-`{vault}/.obsidian-memory/memories.json`
+**Q: Why browser extension needs a server?**
+A: Browser extensions can't read local files directly. The server reads `memories.json` and serves it via HTTP.
 
-### Q: How to disable auto-capture?
-Turn off "Auto Capture" in settings - plugin will only record manually added memories.
+**Q: How to disable auto-capture?**
+A: Settings → Auto Capture → OFF. Plugin records only manually added memories.
 
 ---
 
 ## License
 
 MIT License
+
+---
+
+*Give your AI a memory. Give yourself back your time.*
