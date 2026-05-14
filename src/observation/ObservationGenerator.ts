@@ -1,7 +1,14 @@
 import { SqliteStore, Observation, MemorySession } from '../storage/SqliteStore';
 import { SearchManager } from '../search/SearchManager';
 
-const MINIMAX_API_URL = 'https://api.minimax.chat/v1/text/chatcompletion_v2';
+const DEFAULT_API_URL = 'https://api.minimax.chat/v1/text/chatcompletion_v2';
+const DEFAULT_MODEL = 'MiniMax-Text-01';
+
+interface AIConfig {
+  apiKey: string;
+  apiUrl?: string;
+  model?: string;
+}
 
 interface MiniMaxMessage {
   role: 'user' | 'assistant';
@@ -19,12 +26,32 @@ interface MiniMaxResponse {
 export class ObservationGenerator {
   private store: SqliteStore;
   private searchManager: SearchManager;
-  private apiKey: string;
+  private config: AIConfig;
 
-  constructor(store: SqliteStore, searchManager: SearchManager, apiKey: string) {
+  constructor(store: SqliteStore, searchManager: SearchManager, config: AIConfig) {
     this.store = store;
     this.searchManager = searchManager;
-    this.apiKey = apiKey;
+    this.config = {
+      apiKey: config.apiKey,
+      apiUrl: config.apiUrl || DEFAULT_API_URL,
+      model: config.model || DEFAULT_MODEL
+    };
+  }
+
+  setApiKey(apiKey: string): void {
+    this.config.apiKey = apiKey;
+  }
+
+  setApiUrl(apiUrl: string): void {
+    this.config.apiUrl = apiUrl;
+  }
+
+  setModel(model: string): void {
+    this.config.model = model;
+  }
+
+  getConfig(): AIConfig {
+    return { ...this.config };
   }
 
   async processEvent(event: any): Promise<void> {
@@ -77,10 +104,10 @@ export class ObservationGenerator {
     const prompt = this.buildNarrativePrompt(event);
 
     try {
-      const response = await this.callMiniMaxAPI(prompt);
+      const response = await this.callAIAPI(prompt);
       return response;
     } catch (error) {
-      console.error('[ObsidianMemory] MiniMax API error:', error);
+      console.error('[ObsidianMemory] AI API error:', error);
       return this.generateFallbackNarrative(event);
     }
   }
@@ -104,21 +131,25 @@ Focus on:
 Format: Just the narrative text, no labels or prefixes.`;
   }
 
-  private async callMiniMaxAPI(prompt: string, retries = 3): Promise<string> {
-    const messages: MiniMaxMessage[] = [
+  private async callAIAPI(prompt: string, retries = 3): Promise<string> {
+    if (!this.config.apiKey) {
+      throw new Error('No API key configured');
+    }
+
+    const messages: any[] = [
       { role: 'user', content: prompt }
     ];
 
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
-        const response = await fetch(MINIMAX_API_URL, {
+        const response = await fetch(this.config.apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.apiKey}`
+            'Authorization': `Bearer ${this.config.apiKey}`
           },
           body: JSON.stringify({
-            model: 'MiniMax-Text-01',
+            model: this.config.model,
             messages: messages,
             max_tokens: 256,
             temperature: 0.7
@@ -126,7 +157,7 @@ Format: Just the narrative text, no labels or prefixes.`;
         });
 
         if (response.ok) {
-          const data = (await response.json()) as MiniMaxResponse;
+          const data = (await response.json()) as any;
           const content = data.choices?.[0]?.message?.content;
           if (content) return content.trim();
         }
@@ -148,7 +179,7 @@ Format: Just the narrative text, no labels or prefixes.`;
         throw e;
       }
     }
-    throw new Error('MiniMax API failed after retries');
+    throw new Error('AI API failed after retries');
   }
 
   private generateFallbackNarrative(event: any): string {
@@ -246,7 +277,7 @@ ${obsList}
 Format: Just the summary text, no labels or prefixes.`;
 
     try {
-      return await this.callMiniMaxAPI(prompt);
+      return await this.callAIAPI(prompt);
     } catch {
       return `Captured ${observations.length} observations during this session.`;
     }

@@ -828,16 +828,33 @@ var ObservationGenerator_exports = {};
 __export(ObservationGenerator_exports, {
   ObservationGenerator: () => ObservationGenerator
 });
-var MINIMAX_API_URL, ObservationGenerator;
+var DEFAULT_API_URL, DEFAULT_MODEL, ObservationGenerator;
 var init_ObservationGenerator = __esm({
   "src/observation/ObservationGenerator.ts"() {
     "use strict";
-    MINIMAX_API_URL = "https://api.minimax.chat/v1/text/chatcompletion_v2";
+    DEFAULT_API_URL = "https://api.minimax.chat/v1/text/chatcompletion_v2";
+    DEFAULT_MODEL = "MiniMax-Text-01";
     ObservationGenerator = class {
-      constructor(store, searchManager, apiKey) {
+      constructor(store, searchManager, config) {
         this.store = store;
         this.searchManager = searchManager;
-        this.apiKey = apiKey;
+        this.config = {
+          apiKey: config.apiKey,
+          apiUrl: config.apiUrl || DEFAULT_API_URL,
+          model: config.model || DEFAULT_MODEL
+        };
+      }
+      setApiKey(apiKey) {
+        this.config.apiKey = apiKey;
+      }
+      setApiUrl(apiUrl) {
+        this.config.apiUrl = apiUrl;
+      }
+      setModel(model) {
+        this.config.model = model;
+      }
+      getConfig() {
+        return { ...this.config };
       }
       async processEvent(event) {
         let narrative = this.generateFallbackNarrative(event);
@@ -881,10 +898,10 @@ var init_ObservationGenerator = __esm({
       async generateNarrative(event) {
         const prompt = this.buildNarrativePrompt(event);
         try {
-          const response = await this.callMiniMaxAPI(prompt);
+          const response = await this.callAIAPI(prompt);
           return response;
         } catch (error) {
-          console.error("[ObsidianMemory] MiniMax API error:", error);
+          console.error("[ObsidianMemory] AI API error:", error);
           return this.generateFallbackNarrative(event);
         }
       }
@@ -905,20 +922,23 @@ Focus on:
 
 Format: Just the narrative text, no labels or prefixes.`;
       }
-      async callMiniMaxAPI(prompt, retries = 3) {
+      async callAIAPI(prompt, retries = 3) {
+        if (!this.config.apiKey) {
+          throw new Error("No API key configured");
+        }
         const messages = [
           { role: "user", content: prompt }
         ];
         for (let attempt = 0; attempt <= retries; attempt++) {
           try {
-            const response = await fetch(MINIMAX_API_URL, {
+            const response = await fetch(this.config.apiUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.apiKey}`
+                "Authorization": `Bearer ${this.config.apiKey}`
               },
               body: JSON.stringify({
-                model: "MiniMax-Text-01",
+                model: this.config.model,
                 messages,
                 max_tokens: 256,
                 temperature: 0.7
@@ -944,7 +964,7 @@ Format: Just the narrative text, no labels or prefixes.`;
             throw e;
           }
         }
-        throw new Error("MiniMax API failed after retries");
+        throw new Error("AI API failed after retries");
       }
       generateFallbackNarrative(event) {
         const typeLabels = {
@@ -1017,7 +1037,7 @@ ${obsList}
 
 Format: Just the summary text, no labels or prefixes.`;
         try {
-          return await this.callMiniMaxAPI(prompt);
+          return await this.callAIAPI(prompt);
         } catch {
           return `Captured ${observations.length} observations during this session.`;
         }
@@ -1037,6 +1057,8 @@ var import_obsidian3 = require("obsidian");
 // src/settings/SettingsManager.ts
 var DEFAULT_SETTINGS = {
   miniMaxApiKey: "",
+  apiUrl: "https://api.minimax.chat/v1/text/chatcompletion_v2",
+  model: "MiniMax-Text-01",
   pollIntervalSeconds: 30,
   autoCapture: true,
   defaultTimeFilter: "all"
@@ -1076,8 +1098,14 @@ var MemorySettingsTab = class extends import_obsidian.PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.createEl("h2", { text: "\u8BB0\u5FC6\u63D2\u4EF6\u8BBE\u7F6E" });
-    new import_obsidian.Setting(containerEl).setName("MiniMax API Key").setDesc("\u7528\u4E8E AI \u751F\u6210\u8BB0\u5FC6\u63CF\u8FF0\u7684 API Key").addText((text) => text.setPlaceholder("sk-...").setValue(this.manager.settings.miniMaxApiKey).onChange(async (value) => {
+    new import_obsidian.Setting(containerEl).setName("API Key").setDesc("\u7528\u4E8E AI \u751F\u6210\u8BB0\u5FC6\u63CF\u8FF0\u7684 API Key").addText((text) => text.setPlaceholder("sk-...").setValue(this.manager.settings.miniMaxApiKey).onChange(async (value) => {
       await this.manager.set("miniMaxApiKey", value);
+    }));
+    new import_obsidian.Setting(containerEl).setName("API URL").setDesc("AI API \u7684\u7AEF\u70B9\u5730\u5740\uFF08\u53EF\u9009\uFF0C\u9ED8\u8BA4\u4E3A MiniMax\uFF09").addText((text) => text.setPlaceholder("https://api.minimax.chat/v1/text/chatcompletion_v2").setValue(this.manager.settings.apiUrl).onChange(async (value) => {
+      await this.manager.set("apiUrl", value);
+    }));
+    new import_obsidian.Setting(containerEl).setName("Model").setDesc("AI \u6A21\u578B\u540D\u79F0").addText((text) => text.setPlaceholder("MiniMax-Text-01").setValue(this.manager.settings.model).onChange(async (value) => {
+      await this.manager.set("model", value);
     }));
     new import_obsidian.Setting(containerEl).setName("\u81EA\u52A8\u5237\u65B0\u95F4\u9694").setDesc("\u8BBE\u7F6E\u8BB0\u5FC6\u81EA\u52A8\u626B\u63CF\u7684\u65F6\u95F4\u95F4\u9694\uFF08\u79D2\uFF09").addText((text) => text.setPlaceholder("30").setValue(String(this.manager.settings.pollIntervalSeconds)).onChange(async (value) => {
       const num = parseInt(value, 10);
@@ -1138,7 +1166,11 @@ var ObsidianMemoryPlugin = class extends import_obsidian3.Plugin {
       if (!apiKey) {
         console.log("[ObsidianMemory] Warning: No API Key configured. AI generation will use fallback narratives.");
       }
-      const observationGenerator = new ObservationGenerator2(sqliteStore, searchManager, apiKey || "");
+      const observationGenerator = new ObservationGenerator2(sqliteStore, searchManager, {
+        apiKey: apiKey || "",
+        apiUrl: this.settingsManager.get("apiUrl"),
+        model: this.settingsManager.get("model")
+      });
       const pollInterval = this.settingsManager.get("pollIntervalSeconds");
       const autoCapture = this.settingsManager.get("autoCapture");
       const lifecycleManager = new LifecycleManager2(

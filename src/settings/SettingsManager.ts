@@ -2,6 +2,8 @@ import { Plugin } from 'obsidian';
 
 export interface MemoryPluginSettings {
   miniMaxApiKey: string;
+  apiUrl: string;
+  model: string;
   pollIntervalSeconds: number;
   autoCapture: boolean;
   defaultTimeFilter: string;
@@ -9,6 +11,8 @@ export interface MemoryPluginSettings {
 
 export const DEFAULT_SETTINGS: MemoryPluginSettings = {
   miniMaxApiKey: '',
+  apiUrl: 'https://api.minimax.chat/v1/text/chatcompletion_v2',
+  model: 'MiniMax-Text-01',
   pollIntervalSeconds: 30,
   autoCapture: true,
   defaultTimeFilter: 'all'

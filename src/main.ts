@@ -47,7 +47,11 @@ export default class ObsidianMemoryPlugin extends Plugin {
         console.log('[ObsidianMemory] Warning: No API Key configured. AI generation will use fallback narratives.');
       }
 
-      const observationGenerator = new ObservationGenerator(sqliteStore, searchManager, apiKey || '');
+      const observationGenerator = new ObservationGenerator(sqliteStore, searchManager, {
+        apiKey: apiKey || '',
+        apiUrl: this.settingsManager.get('apiUrl'),
+        model: this.settingsManager.get('model')
+      });
 
       const pollInterval = this.settingsManager.get('pollIntervalSeconds');
       const autoCapture = this.settingsManager.get('autoCapture');

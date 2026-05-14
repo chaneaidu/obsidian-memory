@@ -19,13 +19,35 @@ export class MemorySettingsTab extends PluginSettingTab {
 
     // API Key
     new Setting(containerEl)
-      .setName('MiniMax API Key')
+      .setName('API Key')
       .setDesc('用于 AI 生成记忆描述的 API Key')
       .addText(text => text
         .setPlaceholder('sk-...')
         .setValue(this.manager.settings.miniMaxApiKey)
         .onChange(async (value) => {
           await this.manager.set('miniMaxApiKey', value);
+        }));
+
+    // API URL
+    new Setting(containerEl)
+      .setName('API URL')
+      .setDesc('AI API 的端点地址（可选，默认为 MiniMax）')
+      .addText(text => text
+        .setPlaceholder('https://api.minimax.chat/v1/text/chatcompletion_v2')
+        .setValue(this.manager.settings.apiUrl)
+        .onChange(async (value) => {
+          await this.manager.set('apiUrl', value);
+        }));
+
+    // Model
+    new Setting(containerEl)
+      .setName('Model')
+      .setDesc('AI 模型名称')
+      .addText(text => text
+        .setPlaceholder('MiniMax-Text-01')
+        .setValue(this.manager.settings.model)
+        .onChange(async (value) => {
+          await this.manager.set('model', value);
         }));
 
     // Poll Interval
