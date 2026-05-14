@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      width: 360px;
+      min-height: 300px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      color: #333;
+      background: #fff;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-icon {
+      font-size: 24px;
+    }
+    .header-text h1 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .header-text p {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    .status-bar {
+      padding: 8px 16px;
+      background: #f5f5f5;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+    .status-dot.connected {
+      background: #4caf50;
+    }
+    .status-dot.disconnected {
+      background: #f44336;
+    }
+    .search-box {
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+    }
+    .search-box input:focus {
+      border-color: #667eea;
+    }
+    .content {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .memory-list {
+      padding: 8px;
+    }
+    .memory-item {
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .memory-item:hover {
+      border-color: #667eea;
+      background: #f8f6ff;
+    }
+    .memory-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .memory-type {
+      font-size: 12px;
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .memory-time {
+      font-size: 11px;
+      color: #999;
+    }
+    .memory-narrative {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .memory-concepts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .concept-tag {
+      font-size: 11px;
+      background: #e8e4f0;
+      color: #666;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .memory-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #666;
+    }
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .error-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #f44336;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+    .footer {
+      padding: 12px 16px;
+      border-top: 1px solid #eee;
+      background: #fafafa;
+    }
+    .footer-hint {
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-icon">🧠</div>
+    <div class="header-text">
+      <h1>Obsidian Memory</h1>
+      <p>AI 持久记忆系统</p>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">检查连接...</span>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="搜索记忆... (按回车搜索)">
+  </div>
+
+  <div class="content">
+    <div class="memory-list" id="memoryList">
+      <div class="loading">加载中...</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="footer-hint">💡 点击记忆项可注入到当前 AI 对话</p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
