@@ -1,339 +1,254 @@
 # Obsidian Memory
 
-持久化记忆系统 for Obsidian - 自动捕获观察、生成 AI 叙事、支持搜索与上下文注入。
+**Persistent memory for AI** - Capture your Obsidian work, generate AI-readable memories, and inject context into AI conversations.
 
-[English](README_en.md) | 中文
-
----
-
-## 前言
-
-当你使用 Claude Code、ChatGPT 等 AI 助手时，AI 能记住你们的对话历史。但当你回到自己的笔记库工作时，AI 对你的工作内容一无所知。
-
-**Obsidian Memory** 旨在弥合这一鸿沟 —— 让 AI 能够"记住"你在 Obsidian 中的工作，并在需要时将相关记忆注入到 AI 对话中。
+[中文介绍](README_zh.md)
 
 ---
 
-## 背景
+## The Problem
 
-### 问题
+When you chat with AI (Claude, ChatGPT, etc.), each conversation starts from scratch. The AI knows nothing about:
 
-在日常工作中，我们经常面临：
+- Your current project architecture
+- Recent decisions you've made
+- Important discoveries from your work
 
-- **上下文丢失** - 每次新对话都是空白，AI 不了解你的项目背景
-- **手动总结** - 需要手动整理并粘贴上下文到 AI 对话
-- **遗忘风险** - 重要决策和发现可能随着时间被遗忘
-- **碎片化** - 观察分散在大量笔记中，难以检索
+Even though you have everything documented in Obsidian, there's no easy way to give AI that context.
 
-### 解决方案
+## The Solution
 
-Obsidian Memory 自动：
-
-1. 监听 vault 中的文件变化
-2. 生成简洁的观察记录
-3. 提供快速搜索和上下文注入
-
----
-
-## 功能
-
-### 核心功能
-
-| 功能 | 说明 |
-|------|------|
-| **自动捕获** | 每 30 秒扫描 vault，检测文件变化（可配置间隔或关闭） |
-| **AI 叙事生成** | 使用 MiniMax API 将操作转化为自然语言描述 |
-| **持久化存储** | 保存到 `.obsidian-memory/memories.json`，重启后保留 |
-| **关键词搜索** | 支持多词加权搜索、时间过滤、相关性排序 |
-| **手动添加** | 可主动记录想法，不依赖自动捕获 |
-| **上下文注入** | 一键复制格式化记忆到剪贴板 |
-
-### 设置面板
-
-- **API Key 配置** - 使用自己的 MiniMax API Key
-- **轮询间隔** - 调整自动扫描频率
-- **自动捕获开关** - 随时开启/关闭
-- **默认时间过滤** - 全部/今天/本周/本月
-
----
-
-## 应用场景
-
-### 1. AI 辅助开发
+**Obsidian Memory** bridges this gap - it transforms your Obsidian work into persistent memory that AI can understand and use.
 
 ```
-工作流程：
-1. 你在 Obsidian 中编辑代码笔记
-2. AI 自动生成观察记录（如"实现了用户认证模块"）
-3. 下次向 AI 提问时，一键注入相关记忆
-4. AI 了解项目上下文，回复更精准
-```
-
-### 2. 学习笔记管理
-
-```
-工作流程：
-1. 阅读技术文档并在 Obsidian 做笔记
-2. AI 记录关键发现和学习要点
-3. 通过搜索快速找到相关知识点
-4. 生成学习摘要供复习使用
-```
-
-### 3. 项目决策追溯
-
-```
-工作流程：
-1. 在 Obsidian 记录架构决策
-2. AI 捕获并生成决策叙事
-3. 后续可通过搜索追溯当时的决策理由
-```
-
-### 4. 每日工作日志
-
-```
-工作流程：
-1. 日常编辑文件时自动生成观察
-2. 手动添加重要想法
-3. 周末回顾本周记忆，生成总结
+You work in Obsidian → Plugin captures observations → You inject context to AI → AI understands your context
 ```
 
 ---
 
-## 好处
+## Key Features
 
-### 对用户
-
-- **省时** - 自动化记录，无需手动整理
-- **连贯** - AI 对话有上下文，不是每次从零开始
-- **可追溯** - 重要发现和决策不会丢失
-- **私密** - 数据存储在本地 vault，不上传到第三方
-
-### 技术特点
-
-- **轻量** - 仅 3 个轻量级依赖，浏览器即可运行
-- **离线可用** - 核心功能不依赖网络，仅 AI 生成需要
-- **容错** - API 失败时有 fallback 叙事，不中断工作
-- **可扩展** - 模块化架构，便于二次开发
+| Feature | Description |
+|---------|-------------|
+| **Auto Capture** | Detects file changes in your vault every 30 seconds (configurable) |
+| **AI Narrative Generation** | Uses MiniMax API to generate natural language descriptions |
+| **Local Storage** | Saves to `memories.json` - persists across sessions |
+| **Search & Filter** | Keyword search with time-based filtering |
+| **Manual Notes** | Add thoughts manually, not just auto-capture |
+| **Context Injection** | One-click copy formatted memories to clipboard |
 
 ---
 
-## 工作原理
+## Use Cases
+
+### 1. AI-Assisted Development
+
+```
+1. You edit code notes in Obsidian
+2. Plugin generates observations ("Implemented user auth module")
+3. Next time you ask AI, inject the relevant memories
+4. AI understands your project context and gives better answers
+```
+
+### 2. Learning & Research
+
+```
+1. Read documentation and take notes in Obsidian
+2. AI captures key findings and insights
+3. Search quickly to find related knowledge
+4. Generate summaries for review
+```
+
+### 3. Decision Tracking
+
+```
+1. Document architectural decisions in Obsidian
+2. AI captures and generates decision narratives
+3. Later, search to recall why certain decisions were made
+```
+
+### 4. Daily Work Log
+
+```
+1. File edits automatically generate observations
+2. Manually add important thoughts
+3. Weekend review: summarize the week's memories
+```
+
+---
+
+## How It Works
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      Obsidian Vault                         │
-│  ┌─────────┐   ┌─────────┐   ┌─────────┐                   │
+│                      Obsidian Vault                           │
+│  ┌─────────┐   ┌─────────┐   ┌─────────┐                     │
 │  │ File A  │   │ File B  │   │ File C  │   ...             │
 │  └────┬────┘   └────┬────┘   └────┬────┘                   │
-│       │             │             │                         │
-│       └─────────────┼─────────────┘                         │
-│                     ▼                                       │
-│              ┌──────────────┐                               │
-│              │ LifecycleManager │  (30秒轮询)              │
-│              └──────────────┘                               │
-│                     │                                       │
-│                     ▼                                       │
-│         ┌─────────────────────┐                             │
-│         │ ObservationGenerator │  (AI 生成叙事)            │
-│         └─────────────────────┘                             │
-│                     │                                       │
-│                     ▼                                       │
-│         ┌─────────────────────┐                             │
-│         │    SqliteStore      │  (JSON 持久化)              │
-│         └─────────────────────┘                             │
-│                     │                                       │
-│                     ▼                                       │
+│       └─────────────┼─────────────┘                           │
+│                     ▼                                         │
+│              ┌──────────────┐                                │
+│              │ LifecycleManager │  (30s polling)             │
+│              └──────────────┘                                │
+│                     │                                         │
+│                     ▼                                         │
+│         ┌─────────────────────┐                            │
+│         │ ObservationGenerator │  (AI narrative)            │
+│         └─────────────────────┘                            │
+│                     │                                         │
+│                     ▼                                         │
 │           memories.json                                     │
 └─────────────────────────────────────────────────────────────┘
 
-                         │
-                         ▼ (用户操作)
+                         │ (user action)
 
 ┌─────────────────────────────────────────────────────────────┐
 │                      Memory Panel                            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│  │   观察列表   │  │   搜索过滤   │  │   上下文注入 │        │
-│  └─────────────┘  └─────────────┘  └─────────────┘        │
+│  Click 📋 → Memories copied to clipboard → Paste to AI       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 数据结构
+---
 
-```typescript
-interface Observation {
-  id: string;
-  session_id: string;
-  project: string;
-  type: 'change' | 'bugfix' | 'feature' | 'decision';
-  title?: string;
-  narrative?: string;      // AI 生成的叙事
-  facts: string[];
-  concepts: string[];
-  files_read: string[];
-  files_modified: string[];
-  created_at: string;       // ISO 时间戳
-  created_at_epoch: number; // Unix 毫秒时间戳
-}
-```
+## Installation
+
+### Prerequisites
+
+- Obsidian v1.5.0 or higher
+- MiniMax API Key (for AI narrative generation)
+
+### Steps
+
+1. Download `main.js`, `manifest.json`, `styles.css` from releases
+2. Put them in `{vault}/.obsidian/plugins/obsidian-memory/`
+3. Enable plugin in Obsidian Settings → Plugins
+4. Configure your MiniMax API Key in plugin settings
+
+### Get MiniMax API Key
+
+1. Visit [MiniMax API](https://api.minimax.chat/)
+2. Register and get an API Key
+3. Paste in plugin settings
 
 ---
 
-## 安装
+## Usage
 
-### 前置要求
+### Open Memory Panel
 
-- Obsidian v1.5.0 或更高版本
-- MiniMax API Key（用于 AI 叙事生成）
+- Click the lightbulb icon in left sidebar
+- Or use Command Palette (Ctrl/Cmd+P) → search "Memory"
 
-### 安装步骤
+### Add Memory Manually
 
-1. 下载最新版本 `main.js`、`manifest.json`、`styles.css`
-2. 放入 Obsidian vault 的 `.obsidian/plugins/obsidian-memory/` 目录
-3. 在 Obsidian 设置中启用插件
-4. 在插件设置中配置 MiniMax API Key
+1. Click **"+"** button at top
+2. Fill in title, content, type, concepts
+3. Click "Save"
 
-### 获取 MiniMax API Key
+### Search Memories
 
-1. 访问 [MiniMax API](https://api.minimax.chat/)
-2. 注册账号并获取 API Key
-3. 在插件设置中填入
+1. Type keywords in search box
+2. Press Enter
+3. Use time filter (All/Today/This Week/This Month)
 
----
+### Inject Context to AI
 
-## 使用方法
+1. Start an AI conversation
+2. Click **"📋"** button in panel
+3. Memories copied to clipboard
+4. Paste into AI conversation
 
-### 打开记忆面板
+### Delete Memory
 
-- 点击左侧边栏灯泡图标
-- 或使用命令面板（Ctrl/Cmd+P）搜索"记忆"
+- Hover over any memory → red "Delete" button appears
 
-### 添加记忆
+### Export
 
-1. 点击面板顶部的 **"+"** 按钮
-2. 填写标题、内容、类型、概念标签
-3. 点击"保存"
-
-### 搜索记忆
-
-1. 在搜索框输入关键词
-2. 按 Enter 搜索
-3. 使用时间过滤器（全部/今天/本周/本月）缩小范围
-
-### 注入上下文
-
-1. 编辑 AI 对话
-2. 点击面板顶部的 **"📋"** 按钮
-3. 记忆上下文已复制到剪贴板
-4. 粘贴到 AI 对话
-
-### 删除记忆
-
-- 悬停时每条记忆右上角显示红色"删除"按钮
-
-### 导出记忆
-
-- 点击底部"导出记忆"将所有记忆 JSON 复制到剪贴板
+- Click "Export Memories" at bottom → all memories JSON copied to clipboard
 
 ---
 
-## 隐私说明
+## Privacy
 
-- **本地存储** - 所有数据存储在本地 vault 的 `memories.json` 文件
-- **AI 通信** - 只有观察记录（不含文件内容）发送到 MiniMax API
-- **自主控制** - 可随时关闭自动捕获，仅手动添加记忆
-- **无追踪** - 插件不收集任何使用数据
-
----
-
-## 配置文件
-
-| 配置项 | 说明 | 默认值 |
-|--------|------|--------|
-| MiniMax API Key | AI 叙事生成 | （必填） |
-| 自动刷新间隔 | 轮询间隔秒数 | 30 |
-| 自动捕获 | 是否自动捕获变化 | true |
-| 默认时间过滤 | 列表默认时间范围 | 全部 |
+- **Local Storage** - All data saved to local `memories.json`
+- **AI Communication** - Only observations (not file content) sent to MiniMax API
+- **You Control** - Disable auto-capture anytime, manual only
+- **No Tracking** - Plugin collects no usage data
 
 ---
 
-## 技术栈
+## Configuration
 
-| 组件 | 技术 |
-|------|------|
-| 框架 | Obsidian Plugin API |
-| 语言 | TypeScript |
-| 打包 | esbuild |
-| 存储 | JSON 文件（本地） |
+| Setting | Description | Default |
+|---------|-------------|---------|
+| API Key | MiniMax API Key for AI generation | (required) |
+| Poll Interval | Seconds between vault scans | 30 |
+| Auto Capture | Automatically capture file changes | true |
+| Default Time Filter | Default view filter | All |
+
+---
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|------------|
+| Framework | Obsidian Plugin API |
+| Language | TypeScript |
+| Bundler | esbuild |
+| Storage | JSON file (local) |
 | AI | MiniMax Chat API |
 
 ---
 
-## 项目结构
+## Project Structure
 
 ```
 obsidian-memory-plugin/
-├── manifest.json           # 插件元数据
-├── package.json            # 项目配置
-├── tsconfig.json           # TypeScript 配置
-├── styles.css              # 样式
+├── manifest.json           # Plugin metadata
+├── package.json            # Project config
+├── styles.css              # Styles
 ├── src/
-│   ├── main.ts            # 插件入口
+│   ├── main.ts            # Entry point
 │   ├── ui/
-│   │   └── MemoryPanel.ts # 记忆面板 UI
+│   │   └── MemoryPanel.ts # Sidebar UI
 │   ├── storage/
-│   │   └── SqliteStore.ts  # 数据持久化
+│   │   └── SqliteStore.ts  # Data persistence
 │   ├── lifecycle/
-│   │   └── LifecycleManager.ts  # 生命周期/轮询
+│   │   └── LifecycleManager.ts  # Vault polling
 │   ├── search/
-│   │   └── SearchManager.ts     # 搜索管理
+│   │   └── SearchManager.ts     # Search
 │   ├── observation/
-│   │   └── ObservationGenerator.ts  # AI 生成
+│   │   └── ObservationGenerator.ts  # AI generation
 │   ├── settings/
-│   │   ├── SettingsManager.ts    # 设置管理
-│   │   └── SettingsTab.ts       # 设置面板
+│   │   ├── SettingsManager.ts
+│   │   └── SettingsTab.ts
 │   └── utils/
-│       └── tag-stripping.ts     # 隐私标签处理
+│       └── tag-stripping.ts
 └── scripts/
-    ├── bundle.js           # 打包脚本
-    └── deploy.js            # 部署脚本
+    ├── bundle.js
+    └── deploy.js
 ```
 
 ---
 
-## 常见问题
+## FAQ
 
-### Q: API Key 如何获取？
+### Q: How to get API Key?
+Visit [MiniMax API](https://api.minimax.chat/) to register and get one.
 
-访问 [MiniMax API](https://api.minimax.chat/) 注册获取。
+### Q: Why did AI generation fail?
+1. Check if API Key is configured correctly
+2. Check network connection
+3. API has rate limits - wait and retry
 
-### Q: 为什么 AI 生成失败了？
-
-1. 检查 API Key 是否配置正确
-2. 检查网络连接
-3. API 有调用限制，等待后重试
-
-### Q: 数据存储在哪里？
-
+### Q: Where is data stored?
 `{vault}/.obsidian-memory/memories.json`
 
-### Q: 如何完全禁用自动捕获？
-
-在设置中关闭"自动捕获"开关，插件将只记录手动添加的记忆。
+### Q: How to disable auto-capture?
+Turn off "Auto Capture" in settings - plugin will only record manually added memories.
 
 ---
 
 ## License
 
 MIT License
-
----
-
-## 版本历史
-
-### v1.0.0 (2024)
-
-- 初始版本
-- 自动捕获文件变化
-- AI 叙事生成
-- 搜索和上下文注入
-- 设置面板
